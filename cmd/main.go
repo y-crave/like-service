@@ -1,34 +1,34 @@
 package main
 
 import (
-	"base-service/internal/config"
-	"base-service/internal/controller"
-	"base-service/internal/repository"
-	"base-service/internal/service"
-	"database/sql"
+	"like-service/internal/config"
+	"like-service/internal/controller/like_controller"
+	"like-service/internal/repository/like_repo"
+	"like-service/internal/service"
 	"log"
 	"net/http"
 	"strconv"
 
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
 )
 
 func main() {
 	cfg := config.Load()
 
-	db, err := sql.Open("postgres", cfg.PostgresDSN)
+	db, err := gorm.Open(postgres.Open(cfg.PostgresDSN), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to connect database: %v", err)
 	}
-	defer db.Close()
 
-	userRepo := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepo)
-	userController := controller.NewUserController(userService)
+	likeRepo := likerepo.NewLikeRepo(db)
+	likeService := service.NewLikeService(likeRepo)
+	likeController := likecontroller.NewLikeController(likeService)
 
 	router := mux.NewRouter()
-	userController.RegisterRoutes(router)
+	likeController.RegisterRoutes(router)
 
 	log.Printf("Server started on port %d", cfg.HTTPPort)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPort), router))
