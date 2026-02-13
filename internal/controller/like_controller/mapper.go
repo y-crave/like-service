@@ -5,26 +5,27 @@ import (
 	"like-service/internal/domain"
 )
 
-func toDomainLike(like JSONLike) (domain.Like, error) {
-	id, err := uuid.Parse(like.ID)
+func toDomainReaction(reaction JSONReaction) (domain.Reaction, error) {
+	id, err := uuid.Parse(reaction.ID)
 	if err != nil {
 
 	}
 
-	fromUserID, err := uuid.Parse(like.FromUserID)
+	fromUserID, err := uuid.Parse(reaction.FromUserID)
 	if err != nil {
 
 	}
 
-	toUserID, err := uuid.Parse(like.ToUserID)
+	toUserID, err := uuid.Parse(reaction.ToUserID)
 	if err != nil {
 
 	}
 
-	return domain.Like{
+	return domain.Reaction{
 		ID:         id,
 		FromUserID: fromUserID,
 		ToUserID:   toUserID,
-		CreatedAt:  like.CreatedAt,
+		Type:       domain.ReactionType(reaction.Type),
+		CreatedAt:  reaction.CreatedAt,
 	}, nil
 }

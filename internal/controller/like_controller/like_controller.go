@@ -18,25 +18,25 @@ func NewLikeController(svc service.LikeService) *likeController {
 }
 
 func (c *likeController) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/api/v1/like", c.SetLike).Methods(http.MethodPost)
+	router.HandleFunc("/api/v1/like-service/reaction", c.SetReaction).Methods(http.MethodPost)
 }
 
-func (c *likeController) SetLike(w http.ResponseWriter, r *http.Request) {
+func (c *likeController) SetReaction(w http.ResponseWriter, r *http.Request) {
 
-	var like JSONLike
-	if err := json.NewDecoder(r.Body).Decode(&like); err != nil {
+	var reaction JSONReaction
+	if err := json.NewDecoder(r.Body).Decode(&reaction); err != nil {
 		// Пока просто заглушки ошибок
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	domainLike, err := toDomainLike(like)
+	domainReaction, err := toDomainReaction(reaction)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := c.svc.SetLike(r.Context(), domainLike); err != nil {
+	if err := c.svc.SetReaction(r.Context(), &domainReaction); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

@@ -6,15 +6,18 @@ import (
 )
 
 type likeService struct {
-	likeRepo LikeRepo
+	reactionRepo LikeRepo
 }
 
-func NewLikeService(likeRepo LikeRepo) LikeService {
+var _ LikeService = (*likeService)(nil)
+
+func NewLikeService(reactionRepo LikeRepo) *likeService {
 	return &likeService{
-		likeRepo: likeRepo,
+		reactionRepo: reactionRepo,
 	}
 }
 
-func (s *likeService) SetLike(ctx context.Context, like domain.Like) error {
-	return s.likeRepo.Create(ctx, like)
+func (s *likeService) SetReaction(ctx context.Context, reaction *domain.Reaction) error {
+
+	return s.reactionRepo.Create(ctx, reaction)
 }

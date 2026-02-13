@@ -7,10 +7,10 @@ import (
 )
 
 type LikeService interface {
-	SetLike(ctx context.Context, like domain.Like) error
+	SetReaction(ctx context.Context, reaction *domain.Reaction) error
 }
 
 type LikeRepo interface {
-	Create(ctx context.Context, like domain.Like) error
-	Read(ctx context.Context, likeID uuid.UUID) (domain.Like, error)
+	Create(ctx context.Context, reaction *domain.Reaction) error
+	Read(ctx context.Context, reactionID uuid.UUID) (domain.Reaction, error)
 }

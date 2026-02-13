@@ -4,51 +4,50 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"like-service/internal/domain"
 	"like-service/internal/service"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type likeRepo struct {
 	db *gorm.DB
 }
 
-func NewLikeRepo(db *gorm.DB) service.LikeRepo {
+var _ service.LikeRepo = (*likeRepo)(nil)
+
+func NewLikeRepo(db *gorm.DB) *likeRepo {
 	return &likeRepo{
 		db: db,
 	}
 }
 
-func (r *likeRepo) Create(ctx context.Context, like domain.Like) error {
+func (r *likeRepo) Create(ctx context.Context, reaction *domain.Reaction) error {
 
-	gormLike := toGormLike(like)
+	gormReaction := toGormReaction(reaction)
+	err := r.db.WithContext(ctx).Create(&gormReaction).Error
 
-	err := r.db.WithContext(ctx).Create(&gormLike).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return domain.ErrLikeAlreadyExists
-		}
-
 		return fmt.Errorf("%w, gorm error: %v", domain.InternalError, err)
 	}
 
 	return nil
 }
 
-func (r *likeRepo) Read(ctx context.Context, likeID uuid.UUID) (domain.Like, error) {
+func (r *likeRepo) Read(ctx context.Context, reactionID uuid.UUID) (domain.Reaction, error) {
 
-	var gormLike GormLike
+	var gormReaction GormReaction
 
-	err := r.db.WithContext(ctx).Where("id = ?", likeID).First(&gormLike).Error
+	err := r.db.WithContext(ctx).Where("id = ?", reactionID).First(&gormReaction).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return domain.Like{}, domain.ErrLikeNotFound
+			return domain.Reaction{}, domain.ErrLikeNotFound
 		}
 
-		return domain.Like{}, fmt.Errorf("%w, gorm error: %v", domain.InternalError, err)
+		return domain.Reaction{}, fmt.Errorf("%w, gorm error: %v", domain.InternalError, err)
 
 	}
 
-	return toDomainLike(gormLike), nil
+	return toDomainReaction(&gormReaction), nil
 }

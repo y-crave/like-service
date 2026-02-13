@@ -4,20 +4,30 @@ import (
 	"like-service/internal/domain"
 )
 
-func toDomainLike(like GormLike) domain.Like {
-	return domain.Like{
-		ID:         like.ID,
-		FromUserID: like.FromUserID,
-		ToUserID:   like.ToUserID,
-		CreatedAt:  like.CreatedAt,
+func toDomainReaction(
+	reaction *GormReaction,
+) domain.Reaction {
+	return domain.Reaction{
+		ID:         reaction.ID,
+		FromUserID: reaction.FromUserID,
+		ToUserID:   reaction.ToUserID,
+
+		Type: domain.ReactionType(reaction.Type),
+
+		CreatedAt: reaction.CreatedAt,
 	}
 }
 
-func toGormLike(like domain.Like) GormLike {
-	return GormLike{
-		ID:         like.ID,
-		FromUserID: like.FromUserID,
-		ToUserID:   like.ToUserID,
-		CreatedAt:  like.CreatedAt,
+func toGormReaction(
+	reaction *domain.Reaction,
+) GormReaction {
+	return GormReaction{
+		ID:         reaction.ID,
+		FromUserID: reaction.FromUserID,
+		ToUserID:   reaction.ToUserID,
+
+		Type: ReactionType(reaction.Type),
+
+		CreatedAt: reaction.CreatedAt,
 	}
 }

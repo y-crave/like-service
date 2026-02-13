@@ -1,27 +1,20 @@
-CREATE TABLE likes (
-id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+
+
+CREATE TABLE reactions (
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 from_user_id UUID NOT NULL,
 to_user_id UUID NOT NULL,
+type INT2 NOT NULL,
+
 created_at timestamptz DEFAULT now()
 );
 
-CREATE UNIQUE INDEX ux_likes_from_to ON likes(from_user_id, to_user_id);
-CREATE INDEX idx_likes_from_user ON likes(from_user_id);
-CREATE INDEX idx_likes_to_user ON likes(to_user_id);
-
-CREATE TABLE dislikes (
-id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-from_user_id UUID NOT NULL,
-to_user_id UUID NOT NULL,
-created_at timestamptz DEFAULT now()
-);
-
-CREATE UNIQUE INDEX ux_dislikes_from_to ON dislikes(from_user_id, to_user_id);
-CREATE INDEX idx_dislikes_from_user ON dislikes(from_user_id);
-CREATE INDEX idx_dislikes_to_user ON dislikes(to_user_id);
+CREATE UNIQUE INDEX ux_reactions_from_to ON reactions(from_user_id, to_user_id);
+CREATE INDEX idx_reactions_from_user ON reactions(from_user_id);
+CREATE INDEX idx_reactions_to_user ON reactions(to_user_id);
 
 CREATE TABLE matches (
-id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 user_first UUID NOT NULL,
 user_second UUID NOT NULL,
 created_at timestamptz DEFAULT now()
