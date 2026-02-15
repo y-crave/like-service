@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"like-service/internal/domain"
-	"like-service/internal/service"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
