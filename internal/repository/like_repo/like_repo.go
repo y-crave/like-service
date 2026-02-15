@@ -15,8 +15,6 @@ type likeRepo struct {
 	db *gorm.DB
 }
 
-var _ service.LikeRepo = (*likeRepo)(nil)
-
 func NewLikeRepo(db *gorm.DB) *likeRepo {
 	return &likeRepo{
 		db: db,

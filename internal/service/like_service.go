@@ -9,8 +9,6 @@ type likeService struct {
 	reactionRepo LikeRepo
 }
 
-var _ LikeService = (*likeService)(nil)
-
 func NewLikeService(reactionRepo LikeRepo) *likeService {
 	return &likeService{
 		reactionRepo: reactionRepo,
