@@ -6,6 +6,10 @@ import (
 )
 
 type Config struct {
+	DBName      string
+	DBUser      string
+	DBPassword  string
+	DBTLS       string
 	PostgresDSN string
 	RedisAddr   string
 	KafkaBroker string
