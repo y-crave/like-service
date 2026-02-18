@@ -29,3 +29,13 @@ func toDomainReaction(reaction JSONReaction) (domain.Reaction, error) {
 		CreatedAt:  reaction.CreatedAt,
 	}, nil
 }
+
+func toJSONReaction(reaction *domain.Reaction) JSONReaction {
+	return JSONReaction{
+		ID:         reaction.ID.String(),
+		FromUserID: reaction.FromUserID.String(),
+		ToUserID:   reaction.ToUserID.String(),
+		Type:       uint8(reaction.Type),
+		CreatedAt:  reaction.CreatedAt,
+	}
+}

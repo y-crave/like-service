@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"like-service/internal/domain"
 	"github.com/google/uuid"
+	"like-service/internal/domain"
 )
 
 type likeService struct {
@@ -22,4 +22,8 @@ func (s *likeService) SetReaction(ctx context.Context, reaction *domain.Reaction
 
 func (s *likeService) GetReaction(ctx context.Context, reactionID uuid.UUID) (domain.Reaction, error) {
 	return domain.Reaction{}, nil
+}
+
+func (s *likeService) GetReactionsByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Reaction, error) {
+	return s.reactionRepo.ReadByUserID(ctx, userID, limit, offset)
 }

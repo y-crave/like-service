@@ -51,21 +51,22 @@ func (r *likeRepo) Read(ctx context.Context, reactionID uuid.UUID) (domain.React
 
 func (r *likeRepo) ReadByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Reaction, error) {
 	var gormReactions []GormReaction
-	
-	err := r.db.WithContext(ctx).Where("from_user_id = ?", userID).Limit(limit).Offset(offset).Find(&gormReactions).Error
+
+	err := r.db.WithContext(ctx).
+		Model(&GormReaction{}).
+		Where("from_user_id = ?", userID).
+		Limit(limit).Offset(offset).
+		Find(&gormReactions).Error
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, domain.ErrLikeNotFound
-		}
 		return nil, fmt.Errorf("%w, gorm error: %v", domain.InternalError, err)
 	}
 
-	var domainReactions []domain.Reaction
+	domainReactions := make([]domain.Reaction, 0, len(gormReactions))
 
 	for i := 0; i < len(gormReactions); i++ {
-		domainReactions = append(domainReactions, toDomainReaction(&gormReactions[i]))
+		domainReactions[i] = toDomainReaction(&gormReactions[i])
 	}
 
 	return domainReactions, nil
 }
-

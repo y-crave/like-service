@@ -5,7 +5,12 @@ import (
 	"github.com/gorilla/mux"
 	"like-service/internal/service"
 	"net/http"
-	"github.com/google/uuid"
+)
+
+const (
+	DEFAULT_REACTIONS_LIMIT = 20
+	MAX_REACTIONS_LIMIT     = 1000
+	DEFAULT_OFFSET          = 0
 )
 
 type likeController struct {
@@ -47,5 +52,46 @@ func (c *likeController) SetReaction(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *likeController) GetReactionsByUser(w http.ResponseWriter, r *http.Request) {
-	
+
+	//TODO id пользователя будет браться из токена в куках.
+	userID, err := parseUUIDQuery(r, "userID")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	limit := parseIntQuery(r, "limit", DEFAULT_REACTIONS_LIMIT)
+	if limit <= 0 || limit > MAX_REACTIONS_LIMIT {
+		//TODO Можно сделать: Если limit больше max_limit можно сделать его default_limit
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	offset := parseIntQuery(r, "offset", DEFAULT_OFFSET)
+	if offset < 0 {
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	reactions, err := c.svc.GetReactionsByUserID(r.Context(), userID, limit, offset)
+	if err != nil {
+		//TODO Обработать ошибку.
+		http.Error(w, err.Error(), 500)
+	}
+
+	jsonReactions := make([]JSONReaction, 0, len(reactions))
+
+	for i := 0; i < len(reactions); i++ {
+		jsonReactions[i] = toJSONReaction(&reactions[i])
+	}
+
+	var response JSONReactionsByUser
+	response.Reactions = jsonReactions
+	response.Limit = limit
+	response.Offset = offset
+
+	err = json.NewEncoder(w).Encode(&response)
+	if err != nil {
+		//TODO Это стоит хотябы залогировать.
+	}
 }
