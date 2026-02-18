@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"like-service/internal/service"
 	"net/http"
+	"github.com/google/uuid"
 )
 
 type likeController struct {
@@ -19,6 +20,7 @@ func NewLikeController(svc service.LikeService) *likeController {
 
 func (c *likeController) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/api/v1/like-service/reaction", c.SetReaction).Methods(http.MethodPost)
+	router.HandleFunc("/api/v1/like-service/reactions", c.GetReactionsByUser).Methods(http.MethodGet)
 }
 
 func (c *likeController) SetReaction(w http.ResponseWriter, r *http.Request) {
@@ -42,4 +44,8 @@ func (c *likeController) SetReaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (c *likeController) GetReactionsByUser(w http.ResponseWriter, r *http.Request) {
+	
 }

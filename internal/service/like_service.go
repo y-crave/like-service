@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"like-service/internal/domain"
+	"github.com/google/uuid"
 )
 
 type likeService struct {
@@ -16,6 +17,9 @@ func NewLikeService(reactionRepo LikeRepo) *likeService {
 }
 
 func (s *likeService) SetReaction(ctx context.Context, reaction *domain.Reaction) error {
-
 	return s.reactionRepo.Create(ctx, reaction)
+}
+
+func (s *likeService) GetReaction(ctx context.Context, reactionID uuid.UUID) (domain.Reaction, error) {
+	return domain.Reaction{}, nil
 }

@@ -11,3 +11,9 @@ type JSONReaction struct {
 	Type       uint8     `json:"type"`
 	CreatedAt  time.Time `json:"created_at"`
 }
+
+type JSONReactionsByUser struct {
+	Reactions []JSONReaction
+	Limit int
+	Offset int
+}
